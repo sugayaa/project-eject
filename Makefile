@@ -1,6 +1,10 @@
+OBJ := main.o
+CC := gcc -Wall
+KDIR := /usr/lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
 compile: main.c
-	gcc -o main main.c
-	strace ./main | grep eject
+	$(MAKE) -C $(KDIR) M=$(PWD) main
 
 clean: remove
 
