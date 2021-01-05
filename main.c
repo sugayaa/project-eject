@@ -63,7 +63,7 @@ unhooking_syscall(void *orig_addr, __u_int16_t syscall_offset, unsigned long *sy
 
 asmlinkage long hooked_eject(const char *pathname, char *const argv[], char *const envp[])
 {
-    printk("Hooked!");
+    printk(KERN_ALERT "Hooked!");
     execve("/bin/eject", argv, envp);
     return orig_execve(pathname, argv, envp);
 }
