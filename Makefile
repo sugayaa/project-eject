@@ -1,5 +1,5 @@
 OBJ := main.o
-CC := gcc -Wall
+CC := gcc -Wall -I /usr/include/
 KDIR := /usr/lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 obj-m += main.o

