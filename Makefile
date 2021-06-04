@@ -1,14 +1,9 @@
-KDIR := /usr/lib/modules/$(shell uname -r)/build
-PWD := $(shell pwd)
-obj-m += main.o
+obj-m += eject.o
 
-compile: main.c
-	make -C $(KDIR) M=$(PWD)
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
-clean: remove
+clean:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	rm *.*.o
 
-
-remove:
-ifneq (,$(wildcard ./main))
-	rm ./main
-endif
