@@ -2,3 +2,6 @@
 ----
 ### Tested on
 Ubuntu 16.04 LTS: 
+
+### References
+https://github.com/jvns/kernel-module-fun
